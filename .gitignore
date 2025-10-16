@@ -33,3 +33,6 @@ go.work.sum
 
 # Ignore elastic start local, user should run `make es-setup` to install it
 elastic-start-local/
+todoify
+
+docs/planning
