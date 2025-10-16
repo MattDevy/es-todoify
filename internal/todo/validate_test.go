@@ -2,6 +2,8 @@ package todo
 
 import (
 	"testing"
+
+	"github.com/google/go-cmp/cmp"
 )
 
 func TestTranslateError(t *testing.T) {
@@ -18,8 +20,9 @@ func TestTranslateError(t *testing.T) {
 			},
 			wantError: true,
 			checkMsg: func(errs map[string]string) bool {
-				msg, ok := errs["Title"]
-				return ok && msg != "" // Should have a translated message
+				return cmp.Equal(errs, map[string]string{
+					"Title": "Title must be at least 1 character in length",
+				})
 			},
 		},
 		{
@@ -29,8 +32,9 @@ func TestTranslateError(t *testing.T) {
 			},
 			wantError: true,
 			checkMsg: func(errs map[string]string) bool {
-				msg, ok := errs["Title"]
-				return ok && msg != "" // Should have a translated message
+				return cmp.Equal(errs, map[string]string{
+					"Title": "Title must be a maximum of 255 characters in length",
+				})
 			},
 		},
 		{
@@ -50,14 +54,12 @@ func TestTranslateError(t *testing.T) {
 			}
 
 			if err != nil {
+
 				// Get translated errors
 				translatedErrs := TranslateError(err)
 				if translatedErrs == nil {
 					t.Error("TranslateError() returned nil for validation error")
 				}
-
-				// Print the translated errors for verification
-				t.Logf("Translated errors: %v", translatedErrs)
 
 				if tt.checkMsg != nil && !tt.checkMsg(translatedErrs) {
 					t.Error("Translated error message validation failed")
