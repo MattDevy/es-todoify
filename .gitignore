@@ -31,6 +31,11 @@ go.work.sum
 # .idea/
 # .vscode/
 
+CLAUDE.md
+AGENTS.md
+.serena
+.nvmrc
+
 # Ignore elastic start local, user should run `make es-setup` to install it
 elastic-start-local/
 todoify
