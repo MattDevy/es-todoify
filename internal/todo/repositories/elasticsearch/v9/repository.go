@@ -70,3 +70,21 @@ func (r *Repository) Get(ctx context.Context, id string) (*todo.Todo, error) {
 
 	return &t, nil
 }
+
+func (r *Repository) Update(ctx context.Context, t *todo.Todo) error {
+	_, err := r.client.Index(r.indexName).Document(t).Do(ctx)
+	if err != nil {
+		return fmt.Errorf("failed to update todo: %w", err)
+	}
+
+	return nil
+}
+
+func (r *Repository) Delete(ctx context.Context, id string) error {
+	_, err := r.client.Delete(r.indexName, id).Do(ctx)
+	if err != nil {
+		return fmt.Errorf("failed to delete todo: %w", err)
+	}
+
+	return nil
+}
