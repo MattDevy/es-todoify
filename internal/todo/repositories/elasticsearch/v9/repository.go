@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"context"
 	"encoding/json"
+	"errors"
 	"fmt"
 
 	"github.com/MattDevy/es-todoify/internal/todo"
@@ -87,4 +88,12 @@ func (r *Repository) Delete(ctx context.Context, id string) error {
 	}
 
 	return nil
+}
+
+func (r *Repository) List(ctx context.Context, filter todo.ListFilter) ([]*todo.Todo, error) {
+	return nil, errors.New("not implemented")
+}
+
+func (r *Repository) Count(ctx context.Context, filter todo.ListFilter) (int, error) {
+	return 0, errors.New("not implemented")
 }

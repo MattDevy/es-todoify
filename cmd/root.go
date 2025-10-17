@@ -7,17 +7,22 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"log/slog"
 	"os"
 	"strings"
 
+	"github.com/MattDevy/es-todoify/internal/todo"
+	esrepo "github.com/MattDevy/es-todoify/internal/todo/repositories/elasticsearch/v9"
 	"github.com/elastic/go-elasticsearch/v9"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
 )
 
 var (
-	cfgFile  string
-	esClient *elasticsearch.TypedClient // Typed Elasticsearch client
+	cfgFile string
+	logger  *slog.Logger = slog.Default()
+	repo    todo.Repository
+	service *todo.Service
 )
 
 // rootCmd represents the base command when called without any subcommands
@@ -40,10 +45,14 @@ aggregations, and scalability for your todo management.`,
 			return err
 		}
 
-		// Initialize Elasticsearch client
-		if err := initElasticsearchClient(); err != nil {
+		initLogger()
+
+		// Initialize repository
+		if err := initRepository(); err != nil {
 			return err
 		}
+
+		service = todo.NewService(repo)
 
 		return nil
 	},
@@ -111,8 +120,13 @@ func initConfig(cmd *cobra.Command) error {
 	return nil
 }
 
+func initLogger() {
+	// TODO: Support different log levels and output formats
+	logger = slog.New(slog.NewTextHandler(os.Stdout, nil))
+}
+
 // initElasticsearchClient initializes the Elasticsearch typed client
-func initElasticsearchClient() error {
+func initRepository() error {
 	// Retrieve configuration values from Viper
 	esAddrs := viper.GetStringSlice("es-addrs")
 	esUsername := viper.GetString("es-username")
@@ -160,11 +174,10 @@ func initElasticsearchClient() error {
 		return fmt.Errorf("failed to connect to Elasticsearch at %v: %w\nPlease check:\n  - Elasticsearch is running\n  - Addresses are correct\n  - Credentials are valid", esAddrs, err)
 	}
 
-	// Store client in package variable
-	esClient = client
+	repo = esrepo.NewRepository(client, viper.GetString("es-index"))
 
 	// Log successful connection
-	fmt.Printf("Connected to Elasticsearch cluster: %s\n", info.ClusterName)
+	logger.Debug("Connected to Elasticsearch cluster", "clusterName", info.ClusterName)
 
 	return nil
 }
