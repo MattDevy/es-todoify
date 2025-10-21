@@ -22,14 +22,21 @@ var listCmd = &cobra.Command{
 	Long: `List todos from Elasticsearch with powerful filtering and search capabilities.
 
 You can filter by status, labels, search text, and date ranges. Results can be
-sorted by different fields and paginated for large result sets.
+sorted by different fields and paginated for large result sets. Use --count to
+get the total number of matching todos instead of listing them.
 
 Examples:
   # List all todos (default: 50 most recent)
   todoify list
 
+  # Count all todos
+  todoify list --count
+
   # Filter by status
   todoify list --status pending
+
+  # Count pending todos
+  todoify list --status pending -c
 
   # Filter by multiple labels
   todoify list --labels bug,urgent
@@ -51,6 +58,20 @@ Examples:
 		if err != nil {
 			logger.Error("invalid filter parameters", "error", err)
 			os.Exit(1)
+		}
+
+		// Check if count flag is set
+		if viper.GetBool("count") {
+			// Call service to count todos
+			count, err := service.CountTodos(cmd.Context(), filter)
+			if err != nil {
+				logger.Error("failed to count todos", "error", err)
+				os.Exit(1)
+			}
+
+			// Print count result
+			fmt.Printf("Found %d todo(s) matching filter\n", count)
+			return
 		}
 
 		// Call service to list todos
@@ -172,6 +193,9 @@ func printTodos(todos []*todo.Todo) {
 func init() {
 	rootCmd.AddCommand(listCmd)
 
+	// Count flag
+	listCmd.Flags().BoolP("count", "c", false, "Return count of todos matching filter instead of listing them")
+
 	// Filter flags
 	listCmd.Flags().StringP("status", "s", "", "Filter by status (pending, in_progress, completed, cancelled, blocked)")
 	listCmd.Flags().StringSliceP("labels", "l", []string{}, "Filter by labels (comma-separated, must have all)")
@@ -188,6 +212,7 @@ func init() {
 	listCmd.Flags().String("sort-order", "desc", "Sort order (asc, desc)")
 
 	// Bind flags to viper
+	viper.BindPFlag("count", listCmd.Flags().Lookup("count"))
 	viper.BindPFlag("status", listCmd.Flags().Lookup("status"))
 	viper.BindPFlag("labels", listCmd.Flags().Lookup("labels"))
 	viper.BindPFlag("search", listCmd.Flags().Lookup("search"))
