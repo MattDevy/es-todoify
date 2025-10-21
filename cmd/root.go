@@ -12,7 +12,7 @@ import (
 	"strings"
 
 	"github.com/MattDevy/es-todoify/cmd/operations"
-	"github.com/MattDevy/es-todoify/cmd/sdk"
+	"github.com/MattDevy/es-todoify/internal/sdk"
 	"github.com/MattDevy/es-todoify/internal/todo"
 	esrepo "github.com/MattDevy/es-todoify/internal/todo/repositories/elasticsearch/v9"
 	"github.com/elastic/go-elasticsearch/v9"

@@ -7,7 +7,7 @@ import (
 	"encoding/json"
 	"os"
 
-	"github.com/MattDevy/es-todoify/cmd/sdk"
+	"github.com/MattDevy/es-todoify/internal/sdk"
 	"github.com/spf13/cobra"
 )
 

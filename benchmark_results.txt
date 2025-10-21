@@ -1,0 +1,35 @@
+goos: darwin
+goarch: arm64
+cpu: Apple M4 Pro
+BenchmarkMutexCounter-14                 	53269922	        98.40 ns/op	       0 B/op	       0 allocs/op
+BenchmarkMutexCounter-14                 	61660596	       104.6 ns/op	       0 B/op	       0 allocs/op
+BenchmarkMutexCounter-14                 	57034423	        98.22 ns/op	       0 B/op	       0 allocs/op
+BenchmarkAtomicCounter-14                	125212476	        48.43 ns/op	       0 B/op	       0 allocs/op
+BenchmarkAtomicCounter-14                	124770411	        50.77 ns/op	       0 B/op	       0 allocs/op
+BenchmarkAtomicCounter-14                	100000000	        50.10 ns/op	       0 B/op	       0 allocs/op
+BenchmarkMutexCounterNoContention-14     	1000000000	         1.550 ns/op	       0 B/op	       0 allocs/op
+BenchmarkMutexCounterNoContention-14     	1000000000	         1.554 ns/op	       0 B/op	       0 allocs/op
+BenchmarkMutexCounterNoContention-14     	1000000000	         1.556 ns/op	       0 B/op	       0 allocs/op
+BenchmarkAtomicCounterNoContention-14    	1000000000	         1.578 ns/op	       0 B/op	       0 allocs/op
+BenchmarkAtomicCounterNoContention-14    	1000000000	         1.573 ns/op	       0 B/op	       0 allocs/op
+BenchmarkAtomicCounterNoContention-14    	1000000000	         1.598 ns/op	       0 B/op	       0 allocs/op
+BenchmarkRWMutexRead-14                  	39643188	       133.1 ns/op	       0 B/op	       0 allocs/op
+BenchmarkRWMutexRead-14                  	50760561	       129.6 ns/op	       0 B/op	       0 allocs/op
+BenchmarkRWMutexRead-14                  	44783122	       127.3 ns/op	       0 B/op	       0 allocs/op
+BenchmarkAtomicRead-14                   	1000000000	         0.09980 ns/op	       0 B/op	       0 allocs/op
+BenchmarkAtomicRead-14                   	1000000000	         0.09887 ns/op	       0 B/op	       0 allocs/op
+BenchmarkAtomicRead-14                   	1000000000	         0.09826 ns/op	       0 B/op	       0 allocs/op
+BenchmarkRWMutexReadNoContention-14      	1000000000	         3.179 ns/op	       0 B/op	       0 allocs/op
+BenchmarkRWMutexReadNoContention-14      	1000000000	         3.196 ns/op	       0 B/op	       0 allocs/op
+BenchmarkRWMutexReadNoContention-14      	1000000000	         3.210 ns/op	       0 B/op	       0 allocs/op
+BenchmarkAtomicReadNoContention-14       	1000000000	         0.2366 ns/op	       0 B/op	       0 allocs/op
+BenchmarkAtomicReadNoContention-14       	1000000000	         0.2453 ns/op	       0 B/op	       0 allocs/op
+BenchmarkAtomicReadNoContention-14       	1000000000	         0.2453 ns/op	       0 B/op	       0 allocs/op
+BenchmarkMixedRWMutex-14                 	534404932	        11.17 ns/op	       0 B/op	       0 allocs/op
+BenchmarkMixedRWMutex-14                 	534989263	        11.20 ns/op	       0 B/op	       0 allocs/op
+BenchmarkMixedRWMutex-14                 	539708347	        11.21 ns/op	       0 B/op	       0 allocs/op
+BenchmarkMixedAtomic-14                  	943701952	         6.264 ns/op	       0 B/op	       0 allocs/op
+BenchmarkMixedAtomic-14                  	949969650	         6.363 ns/op	       0 B/op	       0 allocs/op
+BenchmarkMixedAtomic-14                  	954646280	         6.348 ns/op	       0 B/op	       0 allocs/op
+PASS
+ok  	command-line-arguments	126.399s
