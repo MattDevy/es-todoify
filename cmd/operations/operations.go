@@ -15,6 +15,7 @@ func Register(parentCmd *cobra.Command) {
 
 	// Add subcommands with dependencies
 	opsCmd.AddCommand(NewMigrateCmd())
+	opsCmd.AddCommand(NewHealthCmd())
 
 	// Register operations command to parent
 	parentCmd.AddCommand(opsCmd)
@@ -24,8 +25,9 @@ func Register(parentCmd *cobra.Command) {
 // This command groups administrative and maintenance operations.
 func NewOperationsCmd() *cobra.Command {
 	cmd := &cobra.Command{
-		Use:   "operations",
-		Short: "Administrative and maintenance operations",
+		Use:     "operations",
+		Aliases: []string{"ops"},
+		Short:   "Administrative and maintenance operations",
 		Long: `Administrative and maintenance operations for managing the Elasticsearch backend.
 
 This includes operations like creating indices, running migrations, and other
