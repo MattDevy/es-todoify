@@ -2,6 +2,7 @@ package repository
 
 import (
 	"context"
+	"encoding/json"
 	"time"
 )
 
@@ -50,6 +51,20 @@ type HealthInfo struct {
 	//   MongoDB: replica_set_name, oplog_window, replication_lag
 	//   PostgreSQL: database_size, max_connections, cache_hit_ratio
 	Details map[string]interface{} `json:"details,omitempty"`
+}
+
+// MarshalJSON implements custom JSON marshaling for HealthInfo.
+// It formats the ResponseTime as a human-readable string instead of nanoseconds.
+func (h *HealthInfo) MarshalJSON() ([]byte, error) {
+	// Create an anonymous struct with the same fields but ResponseTime as string
+	type Alias HealthInfo
+	return json.Marshal(&struct {
+		*Alias
+		ResponseTime string `json:"responseTime"`
+	}{
+		Alias:        (*Alias)(h),
+		ResponseTime: h.ResponseTime.String(),
+	})
 }
 
 // Base defines common operations that all repositories should support.
