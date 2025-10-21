@@ -39,5 +39,6 @@ AGENTS.md
 # Ignore elastic start local, user should run `make es-setup` to install it
 elastic-start-local/
 todoify
+es-todoify
 
 docs/planning

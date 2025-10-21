@@ -122,7 +122,9 @@ func initConfig(cmd *cobra.Command) error {
 
 func initLogger() {
 	// TODO: Support different log levels and output formats
-	logger = slog.New(slog.NewTextHandler(os.Stdout, nil))
+	logger = slog.New(slog.NewTextHandler(os.Stdout, &slog.HandlerOptions{
+		Level: slog.LevelInfo,
+	}))
 }
 
 // initElasticsearchClient initializes the Elasticsearch typed client
