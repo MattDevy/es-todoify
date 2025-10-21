@@ -5,6 +5,7 @@ import (
 	"errors"
 	"testing"
 
+	"github.com/MattDevy/es-todoify/internal/repository"
 	"github.com/google/uuid"
 	"github.com/stretchr/testify/mock"
 	"github.com/stretchr/testify/require"
@@ -13,6 +14,14 @@ import (
 // MockRepository is a mock implementation of the Repository interface.
 type MockRepository struct {
 	mock.Mock
+}
+
+func (m *MockRepository) Health(ctx context.Context) (*repository.HealthInfo, error) {
+	args := m.Called(ctx)
+	if args.Get(0) == nil {
+		return nil, args.Error(1)
+	}
+	return args.Get(0).(*repository.HealthInfo), args.Error(1)
 }
 
 func (m *MockRepository) Create(ctx context.Context, todo *Todo) error {

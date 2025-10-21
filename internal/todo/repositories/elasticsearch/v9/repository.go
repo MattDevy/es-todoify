@@ -6,7 +6,9 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
+	"time"
 
+	"github.com/MattDevy/es-todoify/internal/repository"
 	"github.com/MattDevy/es-todoify/internal/todo"
 	"github.com/elastic/go-elasticsearch/v9"
 	"github.com/elastic/go-elasticsearch/v9/typedapi/core/search"
@@ -256,5 +258,90 @@ func buildSort(filter todo.ListFilter) []types.SortCombinations {
 				field: {Order: &order},
 			},
 		},
+	}
+}
+
+// Health performs a health check on the Elasticsearch cluster.
+// It returns comprehensive health information including cluster status, node count, and shard statistics.
+func (r *Repository) Health(ctx context.Context) (*repository.HealthInfo, error) {
+	start := time.Now()
+
+	// Call Elasticsearch cluster health API
+	healthResp, err := r.client.Cluster.Health().Do(ctx)
+	if err != nil {
+		// Backend is unavailable or unhealthy
+		return &repository.HealthInfo{
+			Status:       repository.HealthStatusUnhealthy,
+			Available:    false,
+			ResponseTime: time.Since(start),
+			Details: map[string]interface{}{
+				"error": err.Error(),
+			},
+		}, err
+	}
+
+	// Get cluster info for version
+	infoResp, err := r.client.Info().Do(ctx)
+	if err != nil {
+		return &repository.HealthInfo{
+			Status:       repository.HealthStatusUnhealthy,
+			Available:    false,
+			ResponseTime: time.Since(start),
+			Details: map[string]interface{}{
+				"error": err.Error(),
+			},
+		}, err
+	}
+
+	version := infoResp.Version.Int
+
+	// Map Elasticsearch cluster status to our generic health status
+	status := mapESStatusToHealthStatus(healthResp.Status.Name)
+
+	// Convert node count
+	nodeCount := healthResp.NumberOfNodes
+
+	// Build health info
+	healthInfo := &repository.HealthInfo{
+		Status:       status,
+		Available:    true,
+		ResponseTime: time.Since(start),
+		NodeCount:    &nodeCount,
+		Version:      version,
+		Details: map[string]interface{}{
+			"cluster_name":                 healthResp.ClusterName,
+			"cluster_status":               healthResp.Status,
+			"number_of_nodes":              healthResp.NumberOfNodes,
+			"number_of_data_nodes":         healthResp.NumberOfDataNodes,
+			"active_shards":                healthResp.ActiveShards,
+			"active_primary_shards":        healthResp.ActivePrimaryShards,
+			"relocating_shards":            healthResp.RelocatingShards,
+			"initializing_shards":          healthResp.InitializingShards,
+			"unassigned_shards":            healthResp.UnassignedShards,
+			"delayed_unassigned_shards":    healthResp.DelayedUnassignedShards,
+			"number_of_pending_tasks":      healthResp.NumberOfPendingTasks,
+			"number_of_in_flight_fetch":    healthResp.NumberOfInFlightFetch,
+			"task_max_waiting_in_queue_ms": healthResp.TaskMaxWaitingInQueueMillis,
+			"active_shards_percent":        healthResp.ActiveShardsPercentAsNumber,
+		},
+	}
+
+	return healthInfo, nil
+}
+
+// mapESStatusToHealthStatus maps Elasticsearch cluster status to generic health status.
+func mapESStatusToHealthStatus(esStatus string) repository.HealthStatus {
+	switch esStatus {
+	case "green":
+		// All primary and replica shards are active
+		return repository.HealthStatusHealthy
+	case "yellow":
+		// All primary shards are active, but not all replica shards are active
+		return repository.HealthStatusDegraded
+	case "red":
+		// Not all primary shards are active
+		return repository.HealthStatusUnhealthy
+	default:
+		return repository.HealthStatusUnhealthy
 	}
 }

@@ -11,6 +11,8 @@ import (
 	"os"
 	"strings"
 
+	"github.com/MattDevy/es-todoify/cmd/operations"
+	"github.com/MattDevy/es-todoify/cmd/sdk"
 	"github.com/MattDevy/es-todoify/internal/todo"
 	esrepo "github.com/MattDevy/es-todoify/internal/todo/repositories/elasticsearch/v9"
 	"github.com/elastic/go-elasticsearch/v9"
@@ -54,6 +56,11 @@ aggregations, and scalability for your todo management.`,
 
 		service = todo.NewService(repo)
 
+		ctx := sdk.WithService(cmd.Context(), service)
+		ctx = sdk.WithRepo(ctx, repo)
+		ctx = sdk.WithLogger(ctx, logger)
+		cmd.SetContext(ctx)
+
 		return nil
 	},
 }
@@ -77,6 +84,8 @@ func init() {
 	rootCmd.PersistentFlags().String("es-api-key", "", "Elasticsearch API key")
 	rootCmd.PersistentFlags().String("es-index", "todos", "Elasticsearch index name")
 
+	// Register operations parent command (subcommands added lazily when deps are available)
+	operations.Register(rootCmd)
 }
 
 // initConfig reads in config file and ENV variables if set.

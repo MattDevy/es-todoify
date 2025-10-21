@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 
+	"github.com/MattDevy/es-todoify/internal/repository"
 	"github.com/google/uuid"
 )
 
@@ -18,6 +19,12 @@ func NewService(repo Repository) *Service {
 	return &Service{
 		repo: repo,
 	}
+}
+
+// Health checks the health of the underlying repository backend.
+// This delegates to the repository's Health method.
+func (s *Service) Health(ctx context.Context) (*repository.HealthInfo, error) {
+	return s.repo.Health(ctx)
 }
 
 // CreateTodo creates a new todo item.

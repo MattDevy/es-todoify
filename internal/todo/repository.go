@@ -3,11 +3,16 @@ package todo
 import (
 	"context"
 	"time"
+
+	"github.com/MattDevy/es-todoify/internal/repository"
 )
 
 // Repository defines the interface for Todo persistence operations.
 // This is a repository pattern implementation that abstracts storage details.
 type Repository interface {
+	// Embed base repository interface for common operations (e.g., Health)
+	repository.Base
+
 	// Create persists a new Todo.
 	Create(ctx context.Context, todo *Todo) error
 
