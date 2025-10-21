@@ -12,8 +12,9 @@ import (
 
 // deleteCmd represents the delete command
 var deleteCmd = &cobra.Command{
-	Use:   "delete [todo-id]",
-	Short: "A brief description of your command",
+	Use:     "delete [todo-id]",
+	Aliases: []string{"d"},
+	Short:   "A brief description of your command",
 	Long: `A longer description that spans multiple lines and likely contains examples
 and usage of using your command. For example:
 
