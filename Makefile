@@ -18,4 +18,6 @@ es-creds:
 	echo "Elasticsearch password: $${ES_LOCAL_PASSWORD}" && \
 	echo "Elasticsearch API key: $${ES_LOCAL_API_KEY}"
 
+bench:
+	go test -bench=. -benchmem benchmark_counter_test.go
 PHONY: es-setup es-start es-stop es-uninstall es-restart es-creds
