@@ -26,13 +26,13 @@ Todoify is a CLI tool for managing todos with Elasticsearch as the backend. It l
 
 ### Roadmap 🚧
 
-- [ ] Create TODO
-- [ ] Update TODO
-- [ ] List TODOs (with filters and pagination)
-- [ ] Delete TODO
+- [x] Create TODO
+- [x] Update TODO
+- [x] List TODOs (with filters and pagination)
+- [x] Delete TODO
 - [ ] Search TODOs
 - [ ] Bulk TODO upload
-  - [ ] JSONL
+  - [ ] NDJSON
   - [ ] CSV
 - [ ] TODO stats and aggregations
 
@@ -120,19 +120,8 @@ This will display:
 Once Elasticsearch is running, create the todo index with the mapping:
 
 ```bash
-curl -X PUT "localhost:9200/todos" \
-  -H 'Content-Type: application/json' \
-  -u elastic:YOUR_PASSWORD \
-  -d @mappings/todo.json
-```
-
-Or using the API key:
-
-```bash
-curl -X PUT "localhost:9200/todos" \
-  -H 'Content-Type: application/json' \
-  -H "Authorization: ApiKey YOUR_API_KEY" \
-  -d @mappings/todo.json
+export TODOIFY_ES_API_KEY=... # API key from above command
+todoify ops migrate
 ```
 
 ## Configuration
@@ -251,27 +240,7 @@ Each todo document contains the following fields:
 | `createTime` | date | Yes | Creation timestamp |
 | `updateTime` | date | Yes | Last update timestamp |
 
-See [`mappings/README.md`](mappings/README.md) for detailed mapping documentation and query examples.
-
-## Project Structure
-
-```
-es-todoify/
-├── cmd/                    # Cobra commands
-│   ├── root.go            # Root command with ES client initialization
-│   └── create.go          # Create command (in progress)
-├── docs/                   # Documentation
-│   └── planning/          # Implementation planning docs
-├── elastic-start-local/    # Local Elasticsearch setup
-├── internal/              # Internal packages (future)
-├── mappings/              # Elasticsearch index mappings
-│   ├── todo.json          # Todo index mapping
-│   └── README.md          # Mapping documentation
-├── go.mod                 # Go module definition
-├── main.go               # Application entry point
-├── Makefile              # Development tasks
-└── README.md             # This file
-```
+See [`indices/README.md`](internal/todo/repositories/elasticsearch/v9/indices/README.md) for detailed mapping documentation and query examples.
 
 ## Development
 
@@ -296,7 +265,7 @@ Todoify follows a clean architecture approach:
 1. **CLI Layer** (`cmd/`): Cobra commands handle user interaction
 2. **Configuration**: Viper manages multi-source configuration
 3. **Client**: go-elasticsearch typed client initialized once at startup
-4. **Business Logic** (planned): Model & repository pattern for data operations
+4. **Business Logic**: Model & repository pattern for data operations
 5. **Storage**: Elasticsearch backend
 
 For detailed implementation plans, see [`docs/planning/00_setup.md`](docs/planning/00_setup.md).
@@ -333,11 +302,8 @@ If the todo index doesn't exist:
 # Check if index exists
 curl http://localhost:9200/todos -u elastic:PASSWORD
 
-# Create the index
-curl -X PUT "localhost:9200/todos" \
-  -H 'Content-Type: application/json' \
-  -u elastic:PASSWORD \
-  -d @mappings/todo.json
+export TODOIFY_ES_API_KEY=...
+todoify ops migrate
 ```
 
 ### Configuration Precedence
