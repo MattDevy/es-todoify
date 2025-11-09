@@ -1,0 +1,22 @@
+- name: "type/bug"
+  color: "d73a4a"
+  description: "Something isn't working as expected."
+
+- name: "type/enhancement"
+  color: "a2eeef"
+  description: "A new feature or improvement to existing functionality."
+
+- name: "status/triage"
+  color: "b60205"
+  description: "Issue needs triage."
+
+- name: "good first issue"
+  color: "7057ff"
+  description: "A good issue for new contributors."
+  
+# This label will be renamed if it exists as 'docs'
+- name: "documentation"
+  color: "0075ca"
+  description: "Improvements or additions to documentation."
+  aliases:
+    - "docs"
