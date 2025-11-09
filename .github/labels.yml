@@ -1,3 +1,11 @@
+- name: "area/root"
+  color: "8D6E63"
+  description: "A change in the root of the directory."
+
+- name: "area/ci"
+  color: "6A1B9A"
+  description: "A CI change."
+
 - name: "type/bug"
   color: "d73a4a"
   description: "Something isn't working as expected."
