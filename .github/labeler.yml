@@ -1,3 +1,13 @@
 'area/ci':
   - changed-files:
     - any-glob-to-any-file: '.github/workflows/*'
+
+'area/root':
+  - changed-files:
+    - any-glob-to-any-file: '*'
+
+'type/documentation':
+  - changed-files:
+    - any-glob-to-any-file: 
+      - '**.md'
+      - 'docs/**'
