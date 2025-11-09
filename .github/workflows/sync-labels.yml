@@ -3,6 +3,14 @@ on:
   # You can run this with every type of event, but it's better to run it only when you actually need it.
   workflow_dispatch:
 
+  push:
+    # Only run on pushes to the 'main' branch
+    branches:
+      - "main"
+    # Only run if the specified file(s) are changed
+    paths:
+      - ".github/labels.yml"
+
 permissions:
   issues: write
 
