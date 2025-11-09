@@ -6,9 +6,20 @@
   color: "a2eeef"
   description: "A new feature or improvement to existing functionality."
 
+- name: "type/documentation"
+  color: "0075ca"
+  description: "Improvements or additions to documentation."
+  aliases:
+    - "docs"
+    - "documentation"
+
 - name: "status/triage"
   color: "b60205"
   description: "Issue needs triage."
+
+- name: "status/in-progress"
+  color: "0e8a16"
+  description: "Being actively worked on"
 
 - name: "status/awaiting-response"
   color: "fbca04"
@@ -21,10 +32,3 @@
 - name: "good first issue"
   color: "7057ff"
   description: "A good issue for new contributors."
-  
-# This label will be renamed if it exists as 'docs'
-- name: "documentation"
-  color: "0075ca"
-  description: "Improvements or additions to documentation."
-  aliases:
-    - "docs"
