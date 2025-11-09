@@ -70,7 +70,7 @@ body:
           fmt.Println("Hello, world!")
         }
         ```
-      render: go
+      render: markdown
     validations:
       required: true
 
