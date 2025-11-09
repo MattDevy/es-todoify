@@ -10,6 +10,10 @@
   color: "b60205"
   description: "Issue needs triage."
 
+- name: "status/awaiting-response"
+  color: "fbca04"
+  description: "Awaiting user response."
+
 - name: "good first issue"
   color: "7057ff"
   description: "A good issue for new contributors."
