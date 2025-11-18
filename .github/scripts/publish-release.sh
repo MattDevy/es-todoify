@@ -10,14 +10,14 @@ VERSION="${1:-}"
 
 VERSION_NUM="${VERSION#v}"
 RELEASE_BRANCH="${RELEASE_BRANCH:-main}"
-RELEASE="${RELEASE:-}"
+RELEASE="${RELEASE:-false}"
 
 echo "Release version: $VERSION"
 echo "Release branch: $RELEASE_BRANCH"
 
 setup_git_user
 
-if [[ -z "$RELEASE" ]]; then
+if [[ "$RELEASE" != "true" ]]; then
     echo "Preparing changelog for release PR"
     [[ -f "CHANGELOG.md" ]] && git add CHANGELOG.md
     write_github_output "RELEASE_VERSION" "$VERSION"

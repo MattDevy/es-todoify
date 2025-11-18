@@ -8,8 +8,9 @@ on:
         required: false
         type: boolean
         default: false
-  pull_request:
-    types: [closed]
+  push:
+    branches:
+      - main
 
 permissions:
   contents: write
@@ -20,8 +21,18 @@ jobs:
   release:
     name: Semantic Release
     runs-on: ubuntu-latest
-    if: github.event_name == 'workflow_dispatch' || (github.event.pull_request.merged == true && contains(github.event.pull_request.labels.*.name, 'release'))
     steps:
+      - name: Check if release commit
+        id: check_release
+        run: |
+          if [[ "${{ github.event_name }}" == "workflow_dispatch" ]]; then
+            echo "is_release=false" >> $GITHUB_OUTPUT
+          elif [[ "${{ github.event.head_commit.message }}" =~ ^chore\(release\):\ release ]]; then
+            echo "is_release=true" >> $GITHUB_OUTPUT
+          else
+            echo "is_release=false" >> $GITHUB_OUTPUT
+          fi
+
       - name: Checkout
         uses: actions/checkout@v4
         with:
@@ -48,7 +59,7 @@ jobs:
           GIT_USER_NAME: 'Elastic Machine'
           GIT_USER_EMAIL: 'elasticmachine@users.noreply.github.com'
           RELEASE_BRANCH: ${{ github.ref_name }}
-          RELEASE: ${{ github.event_name == 'pull_request' && contains(github.event.pull_request.labels.*.name, 'release') && 'true' || '' }}
+          RELEASE: ${{ steps.check_release.outputs.is_release }}
         run: |
           npx --yes \
             --package semantic-release@25 \
@@ -57,14 +68,14 @@ jobs:
             semantic-release ${{ inputs.dry-run && '--dry-run' || '' }}
 
       - name: Create Release Pull Request
-        if: steps.semantic_release.outputs.RELEASE_VERSION != '' && github.event_name == 'workflow_dispatch'
+        if: steps.semantic_release.outputs.RELEASE_VERSION != '' && steps.check_release.outputs.is_release == 'false'
         uses: peter-evans/create-pull-request@v7
         with:
           token: ${{ secrets.RELEASE_PLEASE_TOKEN }}
-          commit-message: 'chore: release ${{ steps.semantic_release.outputs.RELEASE_VERSION }}'
+          commit-message: 'chore(release): release ${{ steps.semantic_release.outputs.RELEASE_VERSION }}'
           branch: release/${{ steps.semantic_release.outputs.RELEASE_VERSION }}
           delete-branch: true
-          title: 'chore: release ${{ steps.semantic_release.outputs.RELEASE_VERSION }}'
+          title: 'chore(release): release ${{ steps.semantic_release.outputs.RELEASE_VERSION }}'
           body: |
             Release ${{ steps.semantic_release.outputs.RELEASE_VERSION }}
             
@@ -78,7 +89,7 @@ jobs:
           author: 'Elastic Machine <elasticmachine@users.noreply.github.com>'
 
       - name: Create Version Bump Pull Request
-        if: steps.semantic_release.outputs.HAS_CHANGES == 'true' && github.event_name == 'pull_request'
+        if: steps.semantic_release.outputs.HAS_CHANGES == 'true' && steps.check_release.outputs.is_release == 'true'
         uses: peter-evans/create-pull-request@v7
         with:
           token: ${{ secrets.RELEASE_PLEASE_TOKEN }}
