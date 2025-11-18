@@ -76,10 +76,10 @@ jobs:
                   skip-labeling: 'true'
             
             - name: Create Sentinel Tag
-              if: ${{ steps.release.outputs.release_created }}
+              if: ${{ steps.check_manifest.outputs.manifest_changed == 'false' }}
               run: |
                 # Construct the version number from outputs
-                VERSION="${{ steps.release.outputs.major }}.${{ steps.release.outputs.minor }}.${{ steps.release.outputs.patch }}"
+                VERSION="${{ steps.read_version.outputs.major }}.${{ steps.read_version.outputs.minor }}.${{ steps.read_version.outputs.patch }}"
                 SENTINEL_TAG="snapshot-v$VERSION"
                 
                 echo "Release processed! Creating sentinel tag: $SENTINEL_TAG"
