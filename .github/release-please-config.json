@@ -1,0 +1,11 @@
+{
+    "packages": {
+        ".": {
+            "release-type": "go",
+            "extra-files": [],
+            "bootstrap-sha": "541fb0ae8c8d673fb4c965c3910f7470b1d8067f",
+            "skip-github-release": true
+        }
+    },
+    "$schema": "https://raw.githubusercontent.com/googleapis/release-please/main/schemas/config.json"
+}
