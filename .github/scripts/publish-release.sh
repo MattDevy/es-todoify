@@ -37,6 +37,17 @@ if [[ -f "CHANGELOG.md" ]]; then
     git commit -m "chore: update changelog for ${VERSION}" || echo "No changelog changes to commit"
 fi
 
+# Create snapshot tag on main branch (for semantic-release to track)
+SNAPSHOT_TAG="snapshot-v${VERSION_NUM}"
+echo "Creating snapshot tag ${SNAPSHOT_TAG} on main branch..."
+if git rev-parse "$SNAPSHOT_TAG" >/dev/null 2>&1; then
+    echo "Snapshot tag already exists, deleting..."
+    git tag -d "$SNAPSHOT_TAG"
+    git push origin ":refs/tags/$SNAPSHOT_TAG" 2>/dev/null || true
+fi
+git tag "$SNAPSHOT_TAG"
+git push origin "$SNAPSHOT_TAG"
+
 # Run the existing release script (creates detached commit, tags, and releases)
 echo "Creating detached release..."
 ./.github/scripts/release.sh "$VERSION_NUM" "$RELEASE_NOTES"

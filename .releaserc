@@ -17,5 +17,5 @@
       }
     ]
   ],
-  "tagFormat": "v${version}"
+  "tagFormat": "snapshot-v${version}"
 }

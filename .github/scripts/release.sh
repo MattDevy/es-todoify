@@ -88,6 +88,15 @@ RELEASE_VERSION="v${VERSION#v}"
 # 5. Commit and Tag
 log "Committing and tagging..."
 git commit -am "chore: release $RELEASE_VERSION"
+
+# Check if tag already exists
+if git rev-parse "$RELEASE_VERSION" >/dev/null 2>&1; then
+    log "Tag $RELEASE_VERSION already exists, deleting and recreating..."
+    git tag -d "$RELEASE_VERSION"
+    # Also delete from remote if it exists
+    git push origin ":refs/tags/$RELEASE_VERSION" 2>/dev/null || true
+fi
+
 git tag "$RELEASE_VERSION"
 
 # Get the commit SHA that we just tagged
