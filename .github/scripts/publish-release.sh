@@ -30,16 +30,9 @@ echo "Publishing release for version: $VERSION"
 git config user.name "github-actions[bot]"
 git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
 
-# Stage and commit the CHANGELOG.md to include it in the detached commit
-if [[ -f "CHANGELOG.md" ]]; then
-    echo "Staging CHANGELOG.md for detached commit..."
-    git add CHANGELOG.md
-    git commit -m "chore: update changelog for ${VERSION}" || echo "No changelog changes to commit"
-fi
-
-# Create snapshot tag on main branch (for semantic-release to track)
+# Create snapshot tag on main branch BEFORE any commits (for semantic-release to track)
 SNAPSHOT_TAG="snapshot-v${VERSION_NUM}"
-echo "Creating snapshot tag ${SNAPSHOT_TAG} on main branch..."
+echo "Creating snapshot tag ${SNAPSHOT_TAG} on current HEAD..."
 if git rev-parse "$SNAPSHOT_TAG" >/dev/null 2>&1; then
     echo "Snapshot tag already exists, deleting..."
     git tag -d "$SNAPSHOT_TAG"
@@ -47,6 +40,12 @@ if git rev-parse "$SNAPSHOT_TAG" >/dev/null 2>&1; then
 fi
 git tag "$SNAPSHOT_TAG"
 git push origin "$SNAPSHOT_TAG"
+
+# Stage CHANGELOG.md changes for the detached commit (will be committed in release.sh)
+if [[ -f "CHANGELOG.md" ]]; then
+    echo "Staging CHANGELOG.md for detached commit..."
+    git add CHANGELOG.md
+fi
 
 # Run the existing release script (creates detached commit, tags, and releases)
 echo "Creating detached release..."

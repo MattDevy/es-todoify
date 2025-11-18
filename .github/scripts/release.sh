@@ -87,7 +87,9 @@ RELEASE_VERSION="v${VERSION#v}"
 
 # 5. Commit and Tag
 log "Committing and tagging..."
-git commit -am "chore: release $RELEASE_VERSION"
+# Add any staged files (like CHANGELOG.md) plus the modified version file
+git add -A
+git commit -m "chore: release $RELEASE_VERSION"
 
 # Check if tag already exists
 if git rev-parse "$RELEASE_VERSION" >/dev/null 2>&1; then
