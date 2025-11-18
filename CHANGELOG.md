@@ -1,5 +1,12 @@
 # Changelog
 
+## [8.10.0](https://github.com/MattDevy/es-todoify/compare/v8.9.0...v8.10.0) (2025-11-18)
+
+
+### Features
+
+* custom release please handling ([#12](https://github.com/MattDevy/es-todoify/issues/12)) ([563510a](https://github.com/MattDevy/es-todoify/commit/563510a669a218f2537566108cc23978be115a32))
+
 ## [8.9.0](https://github.com/MattDevy/es-todoify/compare/v8.8.0...v8.9.0) (2025-11-18)
 
 
