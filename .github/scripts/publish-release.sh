@@ -11,6 +11,7 @@
 #   - RELEASE_NOTES (Release notes content)
 #   - GIT_USER_NAME (Optional: Git committer name, default: "github-actions[bot]")
 #   - GIT_USER_EMAIL (Optional: Git committer email, default: "41898282+github-actions[bot]@users.noreply.github.com")
+#   - RELEASE_BRANCH (Optional: Branch to release from, default: "main")
 #
 # Note: This script prepares the version bump but does NOT create the PR.
 #       Use peter-evans/create-pull-request action in the workflow to create PR.
@@ -32,8 +33,10 @@ echo "Publishing release for version: $VERSION"
 
 GIT_USER_NAME="${GIT_USER_NAME:-github-actions[bot]}"
 GIT_USER_EMAIL="${GIT_USER_EMAIL:-41898282+github-actions[bot]@users.noreply.github.com}"
+RELEASE_BRANCH="${RELEASE_BRANCH:-main}"
 
 echo "Configuring git with user: $GIT_USER_NAME <$GIT_USER_EMAIL>"
+echo "Release branch: $RELEASE_BRANCH"
 git config user.name "$GIT_USER_NAME"
 git config user.email "$GIT_USER_EMAIL"
 
@@ -59,10 +62,10 @@ echo "Creating detached release..."
 
 IFS='.' read -r MAJOR MINOR PATCH <<< "$VERSION_NUM"
 
-echo "Checking out main branch..."
-git fetch origin main
-git checkout main
-git pull origin main
+echo "Checking out $RELEASE_BRANCH branch..."
+git fetch origin "$RELEASE_BRANCH"
+git checkout "$RELEASE_BRANCH"
+git pull origin "$RELEASE_BRANCH"
 
 # Calculate next version
 NEXT_PATCH=$((PATCH + 1))
