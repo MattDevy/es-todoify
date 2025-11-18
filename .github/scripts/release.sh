@@ -44,7 +44,6 @@ check_dependencies() {
 
 # --- Main Execution ---
 
-# 1. Validation
 check_dependencies
 
 if [[ -z "$VERSION" ]]; then
@@ -57,8 +56,6 @@ fi
 
 log "Starting floating release for version: $VERSION"
 
-# 2. Configure Git Identity (Required in CI)
-# Check if user.name is set, if not, set from environment or use defaults
 if ! git config user.name >/dev/null; then
     GIT_USER_NAME="${GIT_USER_NAME:-Elastic Machine}"
     GIT_USER_EMAIL="${GIT_USER_EMAIL:-elasticmachine@users.noreply.github.com}"
@@ -67,12 +64,9 @@ if ! git config user.name >/dev/null; then
     git config user.email "$GIT_USER_EMAIL"
 fi
 
-# 3. Create Detached State
 log "Creating detached HEAD state..."
 git checkout --detach HEAD
 
-# 4. Modify Version File
-# Strip leading 'v' from version if present
 FILE_VERSION="${VERSION#v}"
 log "Updating $TARGET_FILE to version $FILE_VERSION..."
 if [[ "$OSTYPE" == "darwin"* ]]; then
@@ -90,9 +84,8 @@ fi
 
 RELEASE_VERSION="v${VERSION#v}"
 
-# 5. Commit and Tag
 log "Committing and tagging..."
-# Add any staged files (like CHANGELOG.md) plus the modified version file
+
 git add -A
 git commit -m "chore: release $RELEASE_VERSION"
 
@@ -110,12 +103,10 @@ git tag "$RELEASE_VERSION"
 COMMIT_SHA=$(git rev-parse HEAD)
 log "Tagged commit SHA: $COMMIT_SHA"
 
-# 6. Push Tag
 log "Pushing tag $RELEASE_VERSION..."
 # We purposefully only push the tag, not the detached commit, to the branch
 git push origin "$RELEASE_VERSION"
 
-# 7. Create GitHub Release
 log "Creating GitHub Release..."
 gh release create "$RELEASE_VERSION" \
     --title "$RELEASE_VERSION" \
