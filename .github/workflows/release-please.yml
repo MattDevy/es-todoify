@@ -48,13 +48,14 @@ jobs:
                   echo "minor=$(echo $VERSION | cut -d. -f2)" >> $GITHUB_OUTPUT
                   echo "patch=$(echo $VERSION | cut -d. -f3)" >> $GITHUB_OUTPUT
                   
-                  # Read CHANGELOG for release notes
+                  # Extract added lines from CHANGELOG.md in this commit
                   if [ -f CHANGELOG.md ]; then
-                    # Extract release notes for this version from CHANGELOG
-                    BODY=$(awk "/## \[?${VERSION}\]?/,/## \[?[0-9]/" CHANGELOG.md | sed '1d;$d' | sed '/^$/d' || echo "Release ${VERSION}")
+                    # Get all added lines (excluding the +++ header and ## version line)
+                    BODY=$(git diff HEAD^ HEAD -- CHANGELOG.md | grep '^+' | grep -v '^+++' | grep -v "^+## \[${VERSION}\]" | sed 's/^+//' || echo "Release ${VERSION}")
                   else
                     BODY="Release ${VERSION}"
                   fi
+                  
                   # Multi-line output handling
                   {
                     echo "body<<EOF"
@@ -83,14 +84,22 @@ jobs:
                     echo "major=${{ steps.read_version.outputs.major }}" >> $GITHUB_OUTPUT
                     echo "minor=${{ steps.read_version.outputs.minor }}" >> $GITHUB_OUTPUT
                     echo "patch=${{ steps.read_version.outputs.patch }}" >> $GITHUB_OUTPUT
-                    echo "body=${{ steps.read_version.outputs.body }}" >> $GITHUB_OUTPUT
+                    {
+                      echo "body<<EOF"
+                      echo "${{ steps.read_version.outputs.body }}"
+                      echo "EOF"
+                    } >> $GITHUB_OUTPUT
                   elif [[ -n "${{ steps.release.outputs.version }}" ]]; then
                     echo "proceed=true" >> $GITHUB_OUTPUT
                     echo "version=${{ steps.release.outputs.version }}" >> $GITHUB_OUTPUT
                     echo "major=${{ steps.release.outputs.major }}" >> $GITHUB_OUTPUT
                     echo "minor=${{ steps.release.outputs.minor }}" >> $GITHUB_OUTPUT
                     echo "patch=${{ steps.release.outputs.patch }}" >> $GITHUB_OUTPUT
-                    echo "body=${{ steps.release.outputs.body }}" >> $GITHUB_OUTPUT
+                    {
+                      echo "body<<EOF"
+                      echo "${{ steps.release.outputs.body }}"
+                      echo "EOF"
+                    } >> $GITHUB_OUTPUT
                   else
                     echo "proceed=false" >> $GITHUB_OUTPUT
                   fi
