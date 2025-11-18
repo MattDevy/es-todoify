@@ -1,3 +1,10 @@
+## [8.15.1](https://github.com/MattDevy/es-todoify/compare/snapshot-v8.15.0...snapshot-v8.15.1) (2025-11-18)
+
+
+### Bug Fixes
+
+* handle nothing to bump ([ba6ffe1](https://github.com/MattDevy/es-todoify/commit/ba6ffe184a180a939aee1d3eb892e4e8a3578970))
+
 # [8.15.0](https://github.com/MattDevy/es-todoify/compare/snapshot-v8.14.0...snapshot-v8.15.0) (2025-11-18)
 
 
