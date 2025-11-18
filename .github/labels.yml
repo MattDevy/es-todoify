@@ -40,3 +40,7 @@
 - name: "good first issue"
   color: "7057ff"
   description: "A good issue for new contributors."
+  
+- name: "release"
+  color: "000000"
+  description: "A release label."
