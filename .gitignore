@@ -31,6 +31,11 @@ go.work.sum
 .idea/
 .vscode/
 
+# Node.js (for CI tools only)
+node_modules/
+package-lock.json
+package.json
+
 CLAUDE.md
 AGENTS.md
 .serena
