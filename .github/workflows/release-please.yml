@@ -21,46 +21,107 @@ jobs:
             #   with:
             #       vault-instance: "ci-prod"
 
-            - uses: googleapis/release-please-action@v4
+            - name: Checkout Code
+              uses: actions/checkout@v4
+              with:
+                  fetch-depth: 2
+                  token: ${{ secrets.GITHUB_TOKEN }}
+
+            - name: Check if manifest changed
+              id: check_manifest
+              run: |
+                  if git diff --name-only HEAD^ HEAD | grep -q '^\.github/\.release-please-manifest\.json$'; then
+                    echo "manifest_changed=true" >> $GITHUB_OUTPUT
+                    echo "Manifest file changed in this push"
+                  else
+                    echo "manifest_changed=false" >> $GITHUB_OUTPUT
+                    echo "Manifest file did not change"
+                  fi
+
+            - name: Read version from manifest
+              id: read_version
+              if: ${{ steps.check_manifest.outputs.manifest_changed == 'true' }}
+              run: |
+                  VERSION=$(jq -r '."."' .github/.release-please-manifest.json)
+                  echo "version=$VERSION" >> $GITHUB_OUTPUT
+                  echo "major=$(echo $VERSION | cut -d. -f1)" >> $GITHUB_OUTPUT
+                  echo "minor=$(echo $VERSION | cut -d. -f2)" >> $GITHUB_OUTPUT
+                  echo "patch=$(echo $VERSION | cut -d. -f3)" >> $GITHUB_OUTPUT
+                  
+                  # Read CHANGELOG for release notes
+                  if [ -f CHANGELOG.md ]; then
+                    # Extract release notes for this version from CHANGELOG
+                    BODY=$(awk "/## \[?${VERSION}\]?/,/## \[?[0-9]/" CHANGELOG.md | sed '1d;$d' | sed '/^$/d' || echo "Release ${VERSION}")
+                  else
+                    BODY="Release ${VERSION}"
+                  fi
+                  # Multi-line output handling
+                  {
+                    echo "body<<EOF"
+                    echo "$BODY"
+                    echo "EOF"
+                  } >> $GITHUB_OUTPUT
+                  
+                  echo "Extracted version: $VERSION"
+
+            - name: Run Release Please
+              if: ${{ steps.check_manifest.outputs.manifest_changed == 'false' }}
+              uses: googleapis/release-please-action@v4
               id: release
               with:
                   token: ${{ secrets.RELEASE_PLEASE_TOKEN }}
                   config-file: .github/release-please-config.json
                   manifest-file: .github/.release-please-manifest.json
+                  skip-labeling: 'true'
 
-            - name: Checkout Code
-              if: ${{ steps.release.outputs.release_created }}
-              uses: actions/checkout@v4
-              with:
-                  token: ${{ secrets.GITHUB_TOKEN }}
+            - name: Determine if release should proceed
+              id: should_release
+              run: |
+                  if [[ "${{ steps.check_manifest.outputs.manifest_changed }}" == "true" ]]; then
+                    echo "proceed=true" >> $GITHUB_OUTPUT
+                    echo "version=${{ steps.read_version.outputs.version }}" >> $GITHUB_OUTPUT
+                    echo "major=${{ steps.read_version.outputs.major }}" >> $GITHUB_OUTPUT
+                    echo "minor=${{ steps.read_version.outputs.minor }}" >> $GITHUB_OUTPUT
+                    echo "patch=${{ steps.read_version.outputs.patch }}" >> $GITHUB_OUTPUT
+                    echo "body=${{ steps.read_version.outputs.body }}" >> $GITHUB_OUTPUT
+                  elif [[ -n "${{ steps.release.outputs.version }}" ]]; then
+                    echo "proceed=true" >> $GITHUB_OUTPUT
+                    echo "version=${{ steps.release.outputs.version }}" >> $GITHUB_OUTPUT
+                    echo "major=${{ steps.release.outputs.major }}" >> $GITHUB_OUTPUT
+                    echo "minor=${{ steps.release.outputs.minor }}" >> $GITHUB_OUTPUT
+                    echo "patch=${{ steps.release.outputs.patch }}" >> $GITHUB_OUTPUT
+                    echo "body=${{ steps.release.outputs.body }}" >> $GITHUB_OUTPUT
+                  else
+                    echo "proceed=false" >> $GITHUB_OUTPUT
+                  fi
 
             - name: Release
-              if: ${{ steps.release.outputs.release_created }}
+              if: ${{ steps.should_release.outputs.proceed == 'true' }}
               env:
                   GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
               run: |
                   ./.github/scripts/release.sh \
-                    "${{ steps.release.outputs.version }}" \
-                    "${{ steps.release.outputs.body }}"
+                    "${{ steps.should_release.outputs.version }}" \
+                    "${{ steps.should_release.outputs.body }}"
 
             - name: Checkout main
-              if: ${{ steps.release.outputs.release_created }}
+              if: ${{ steps.should_release.outputs.proceed == 'true' }}
               uses: actions/checkout@v4
               with:
                   ref: refs/heads/main
                   token: ${{ secrets.GITHUB_TOKEN }}
 
             - name: Bump Version
-              if: ${{ steps.release.outputs.release_created }}
+              if: ${{ steps.should_release.outputs.proceed == 'true' }}
               id: bump
               run: |
                   ./.github/scripts/bump-version.sh \
-                    "${{ steps.release.outputs.major }}" \
-                    "${{ steps.release.outputs.minor }}" \
-                    "${{ steps.release.outputs.patch }}"
+                    "${{ steps.should_release.outputs.major }}" \
+                    "${{ steps.should_release.outputs.minor }}" \
+                    "${{ steps.should_release.outputs.patch }}"
 
             - name: Create Pull Request for Version Bump
-              if: ${{ steps.release.outputs.release_created }}
+              if: ${{ steps.should_release.outputs.proceed == 'true' }}
               uses: peter-evans/create-pull-request@v6
               with:
                   token: ${{ secrets.RELEASE_PLEASE_TOKEN }}
@@ -69,7 +130,7 @@ jobs:
                   delete-branch: true
                   title: "chore: bump version to ${{ steps.bump.outputs.next_version }}"
                   body: |
-                      Bumps version to ${{ steps.bump.outputs.next_version }} after release of v${{ steps.release.outputs.version }}.
+                      Bumps version to ${{ steps.bump.outputs.next_version }} after release of v${{ steps.should_release.outputs.version }}.
 
                       Auto-generated by GitHub Actions.
                   base: main
