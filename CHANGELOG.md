@@ -1,3 +1,10 @@
+## [8.16.1](https://github.com/MattDevy/es-todoify/compare/snapshot-v8.16.0...snapshot-v8.16.1) (2025-11-18)
+
+
+### Bug Fixes
+
+* use PAT token ([f1ad594](https://github.com/MattDevy/es-todoify/commit/f1ad5941062dc78adf9a7e5aba5413c65b2ab186))
+
 # [8.15.0](https://github.com/MattDevy/es-todoify/compare/snapshot-v8.14.0...snapshot-v8.15.0) (2025-11-18)
 
 
