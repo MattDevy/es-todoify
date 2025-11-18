@@ -11,6 +11,19 @@
 
 * enhanced release workflow ([fc8b7b0](https://github.com/MattDevy/es-todoify/commit/fc8b7b08e8d927c8a4e342d82a71783cf56aa7ad))
 
+# [8.16.0](https://github.com/MattDevy/es-todoify/compare/snapshot-v8.15.2...snapshot-v8.16.0) (2025-11-18)
+
+
+### Bug Fixes
+
+* merge trigger instead of PR ([10c5655](https://github.com/MattDevy/es-todoify/commit/10c565532e6d2ec6f99e6295b2b4d09ed01b5545))
+* use PAT token ([f1ad594](https://github.com/MattDevy/es-todoify/commit/f1ad5941062dc78adf9a7e5aba5413c65b2ab186))
+
+
+### Features
+
+* enhanced release workflow ([fc8b7b0](https://github.com/MattDevy/es-todoify/commit/fc8b7b08e8d927c8a4e342d82a71783cf56aa7ad))
+
 ## [8.16.2](https://github.com/MattDevy/es-todoify/compare/snapshot-v8.16.1...snapshot-v8.16.2) (2025-11-18)
 
 
