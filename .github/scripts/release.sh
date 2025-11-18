@@ -1,110 +1,47 @@
 #!/usr/bin/env bash
 
-# Licensed to Elasticsearch B.V. under one or more agreements.
-# Elasticsearch B.V. licenses this file to you under the Apache 2.0 License.
-# See the LICENSE file in the project root for more information.
-
-# ==============================================================================
-# Script: release.sh
-# Description: Creates a detached commit with a specific version, tags it, 
-#              and publishes a GitHub Release.
-#
-# Usage: ./release.sh <version> <release_notes> [target_file]
-# Env Vars: 
-#   - GITHUB_TOKEN (Required for gh cli)
-#   - GIT_USER_NAME (Optional: Git committer name, default: "Elastic Machine")
-#   - GIT_USER_EMAIL (Optional: Git committer email, default: "elasticmachine@users.noreply.github.com")
-# ==============================================================================
-
 set -euo pipefail
 
-# --- Configuration ---
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+source "${SCRIPT_DIR}/lib.sh"
+
 VERSION="${1:-}"
 RELEASE_NOTES="${2:-}"
-TARGET_FILE="${3:-version.go}" # Default to elastictransport/version/version.go if not provided
+TARGET_FILE="${3:-version.go}"
 
-# --- Helper Functions ---
 log() {
     echo "[$(date +'%Y-%m-%dT%H:%M:%S%z')] [INFO] $1"
 }
 
-error() {
-    echo "[$(date +'%Y-%m-%dT%H:%M:%S%z')] [ERROR] $1" >&2
-    exit 1
-}
-
-check_dependencies() {
-    command -v git >/dev/null 2>&1 || error "git is required but not installed."
-    command -v gh >/dev/null 2>&1 || error "gh (GitHub CLI) is required but not installed."
-    
-    if [[ -z "${GITHUB_TOKEN:-}" ]]; then
-        error "GITHUB_TOKEN environment variable is required."
-    fi
-}
-
-# --- Main Execution ---
-
-check_dependencies
-
-if [[ -z "$VERSION" ]]; then
-    error "Version argument is missing. Usage: ./script.sh <version> <notes>"
-fi
-
-if [[ ! -f "$TARGET_FILE" ]]; then
-    error "Target file '$TARGET_FILE' does not exist."
-fi
+command -v git >/dev/null 2>&1 || error "git is required but not installed"
+command -v gh >/dev/null 2>&1 || error "gh (GitHub CLI) is required but not installed"
+[[ -n "${GITHUB_TOKEN:-}" ]] || error "GITHUB_TOKEN environment variable is required"
+[[ -n "$VERSION" ]] || error "Version argument is missing. Usage: ./release.sh <version> <notes>"
+[[ -f "$TARGET_FILE" ]] || error "Target file '$TARGET_FILE' does not exist"
 
 log "Starting floating release for version: $VERSION"
 
-if ! git config user.name >/dev/null; then
-    GIT_USER_NAME="${GIT_USER_NAME:-Elastic Machine}"
-    GIT_USER_EMAIL="${GIT_USER_EMAIL:-elasticmachine@users.noreply.github.com}"
-    log "Configuring git user identity: $GIT_USER_NAME <$GIT_USER_EMAIL>"
-    git config user.name "$GIT_USER_NAME"
-    git config user.email "$GIT_USER_EMAIL"
-fi
+setup_git_user "Elastic Machine" "elasticmachine@users.noreply.github.com"
 
 log "Creating detached HEAD state..."
 git checkout --detach HEAD
 
 FILE_VERSION="${VERSION#v}"
-log "Updating $TARGET_FILE to version $FILE_VERSION..."
-if [[ "$OSTYPE" == "darwin"* ]]; then
-    # macOS (BSD sed) requires an empty string for in-place edit without backup
-    sed -i '' "s/Transport *= *\".*\"/Transport = \"$FILE_VERSION\"/" "$TARGET_FILE"
-else
-    sed -i "s/Transport *= *\".*\"/Transport = \"$FILE_VERSION\"/" "$TARGET_FILE"
-fi
-
-if [[ $? -eq 0 ]]; then
-    log "File updated successfully."
-else
-    error "Failed to update $TARGET_FILE using sed."
-fi
+update_version_file "$TARGET_FILE" "$FILE_VERSION"
 
 RELEASE_VERSION="v${VERSION#v}"
 
 log "Committing and tagging..."
-
 git add -A
 git commit -m "chore: release $RELEASE_VERSION"
 
-# Check if tag already exists
-if git rev-parse "$RELEASE_VERSION" >/dev/null 2>&1; then
-    log "Tag $RELEASE_VERSION already exists, deleting and recreating..."
-    git tag -d "$RELEASE_VERSION"
-    # Also delete from remote if it exists
-    git push origin ":refs/tags/$RELEASE_VERSION" 2>/dev/null || true
-fi
-
+delete_tag_if_exists "$RELEASE_VERSION"
 git tag "$RELEASE_VERSION"
 
-# Get the commit SHA that we just tagged
 COMMIT_SHA=$(git rev-parse HEAD)
 log "Tagged commit SHA: $COMMIT_SHA"
 
 log "Pushing tag $RELEASE_VERSION..."
-# We purposefully only push the tag, not the detached commit, to the branch
 git push origin "$RELEASE_VERSION"
 
 log "Creating GitHub Release..."
