@@ -4,6 +4,14 @@
 ### Bug Fixes
 
 * add changelog to release PR ([f8a96c3](https://github.com/MattDevy/es-todoify/commit/f8a96c371e83b21356f696b81aa08492fd40a6c2))
+* dry-run ([55e1bd3](https://github.com/MattDevy/es-todoify/commit/55e1bd34a12e820ac29dbcac7db5c31688b7c621))
+
+## [8.16.1](https://github.com/MattDevy/es-todoify/compare/snapshot-v8.16.0...snapshot-v8.16.1) (2025-11-18)
+
+
+### Bug Fixes
+
+* add changelog to release PR ([f8a96c3](https://github.com/MattDevy/es-todoify/commit/f8a96c371e83b21356f696b81aa08492fd40a6c2))
 
 # [8.16.0](https://github.com/MattDevy/es-todoify/compare/snapshot-v8.15.2...snapshot-v8.16.0) (2025-11-18)
 

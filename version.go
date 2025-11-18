@@ -1,3 +1,3 @@
 package main
 
-const Transport = "8.16.1-SNAPSHOT"
+const Transport = "8.16.1"
