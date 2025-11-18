@@ -5,18 +5,19 @@
 # Description: Publishes the release using the existing release.sh script
 #              and creates a PR to bump the version on main branch.
 #
-# Usage: ./publish-release.sh <version> <release_notes>
-# Env Vars: GITHUB_TOKEN (Required for gh cli)
+# Usage: RELEASE_NOTES="..." ./publish-release.sh <version>
+# Env Vars: 
+#   - GITHUB_TOKEN (Required for gh cli)
+#   - RELEASE_NOTES (Release notes content)
 # ==============================================================================
 
 set -euo pipefail
 
 VERSION="${1:-}"
-RELEASE_NOTES="${2:-}"
 
 if [[ -z "$VERSION" ]]; then
     echo "Error: Version argument is required."
-    echo "Usage: ./publish-release.sh <version> <release_notes>"
+    echo "Usage: RELEASE_NOTES=\"...\" ./publish-release.sh <version>"
     exit 1
 fi
 

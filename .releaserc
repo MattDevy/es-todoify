@@ -13,7 +13,7 @@
       "@semantic-release/exec",
       {
         "prepareCmd": "./.github/scripts/prepare-release.sh ${nextRelease.version}",
-        "publishCmd": "./.github/scripts/publish-release.sh ${nextRelease.version} '${nextRelease.notes}'"
+        "publishCmd": "RELEASE_NOTES=\"${nextRelease.notes}\" ./.github/scripts/publish-release.sh ${nextRelease.version}"
       }
     ]
   ],
