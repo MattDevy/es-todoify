@@ -10,7 +10,10 @@
 #              and publishes a GitHub Release.
 #
 # Usage: ./release.sh <version> <release_notes> [target_file]
-# Env Vars: GITHUB_TOKEN (Required for gh cli)
+# Env Vars: 
+#   - GITHUB_TOKEN (Required for gh cli)
+#   - GIT_USER_NAME (Optional: Git committer name, default: "Elastic Machine")
+#   - GIT_USER_EMAIL (Optional: Git committer email, default: "elasticmachine@users.noreply.github.com")
 # ==============================================================================
 
 set -euo pipefail
@@ -55,11 +58,13 @@ fi
 log "Starting floating release for version: $VERSION"
 
 # 2. Configure Git Identity (Required in CI)
-# Check if user.name is set, if not, set a default bot identity
+# Check if user.name is set, if not, set from environment or use defaults
 if ! git config user.name >/dev/null; then
-    log "Configuring git user identity..."
-    git config user.name "Elastic Machine"
-    git config user.email "elasticmachine@users.noreply.github.com"
+    GIT_USER_NAME="${GIT_USER_NAME:-Elastic Machine}"
+    GIT_USER_EMAIL="${GIT_USER_EMAIL:-elasticmachine@users.noreply.github.com}"
+    log "Configuring git user identity: $GIT_USER_NAME <$GIT_USER_EMAIL>"
+    git config user.name "$GIT_USER_NAME"
+    git config user.email "$GIT_USER_EMAIL"
 fi
 
 # 3. Create Detached State
