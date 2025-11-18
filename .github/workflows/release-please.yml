@@ -76,7 +76,7 @@ jobs:
                   skip-labeling: 'true'
             
             - name: Create Sentinel Tag
-              if: ${{ steps.check_manifest.outputs.manifest_changed == 'false' }}
+              if: ${{ steps.check_manifest.outputs.manifest_changed == 'true' }}
               run: |
                 # Construct the version number from outputs
                 VERSION="${{ steps.read_version.outputs.major }}.${{ steps.read_version.outputs.minor }}.${{ steps.read_version.outputs.patch }}"
