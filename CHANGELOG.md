@@ -1,3 +1,10 @@
+## [8.16.2](https://github.com/MattDevy/es-todoify/compare/snapshot-v8.16.1...snapshot-v8.16.2) (2025-11-18)
+
+
+### Bug Fixes
+
+* merge trigger instead of PR ([10c5655](https://github.com/MattDevy/es-todoify/commit/10c565532e6d2ec6f99e6295b2b4d09ed01b5545))
+
 ## [8.16.1](https://github.com/MattDevy/es-todoify/compare/snapshot-v8.16.0...snapshot-v8.16.1) (2025-11-18)
 
 
