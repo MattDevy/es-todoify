@@ -1,7 +1,18 @@
 {
   "branches": ["main"],
   "plugins": [
-    "@semantic-release/commit-analyzer",
+    ["@semantic-release/commit-analyzer", {
+      "releaseRules": [
+        {"type": "feat", "release": "minor"},
+        {"type": "fix", "release": "patch"},
+        {"type": "chore", "release": false},
+        {"type": "docs", "release": false},
+        {"type": "style", "release": false},
+        {"type": "refactor", "release": false},
+        {"type": "perf", "release": false},
+        {"type": "test", "release": false}
+      ]
+    }],
     "@semantic-release/release-notes-generator",
     [
       "@semantic-release/changelog",
@@ -12,7 +23,6 @@
     [
       "@semantic-release/exec",
       {
-        "prepareCmd": "./.github/scripts/prepare-release.sh ${nextRelease.version}",
         "publishCmd": "RELEASE_NOTES=\"${nextRelease.notes}\" ./.github/scripts/publish-release.sh ${nextRelease.version}"
       }
     ]

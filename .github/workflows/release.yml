@@ -1,9 +1,13 @@
 name: Release
 
 on:
-  push:
-    branches:
-      - main
+  workflow_dispatch:
+    inputs:
+      dry-run:
+        description: 'Run in dry-run mode (no actual release)'
+        required: false
+        type: boolean
+        default: false
 
 permissions:
   contents: write
@@ -43,5 +47,5 @@ jobs:
             --package semantic-release@23 \
             --package @semantic-release/changelog@6 \
             --package @semantic-release/exec@6 \
-            semantic-release
+            semantic-release ${{ inputs.dry-run && '--dry-run' || '' }}
 
