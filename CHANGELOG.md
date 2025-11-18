@@ -1,3 +1,11 @@
+## [8.15.2](https://github.com/MattDevy/es-todoify/compare/snapshot-v8.15.1...snapshot-v8.15.2) (2025-11-18)
+
+
+### Bug Fixes
+
+* allow non-main root ([27bb561](https://github.com/MattDevy/es-todoify/commit/27bb56198a71315788a4538e9ecd14e049d6530b))
+* allow setting of committer and author ([152cfe0](https://github.com/MattDevy/es-todoify/commit/152cfe0225c4e26dc714bcbbbee41a91e2028a7d))
+
 # [8.15.0](https://github.com/MattDevy/es-todoify/compare/snapshot-v8.14.0...snapshot-v8.15.0) (2025-11-18)
 
 
