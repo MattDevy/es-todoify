@@ -1,3 +1,10 @@
+# [8.16.0](https://github.com/MattDevy/es-todoify/compare/snapshot-v8.15.2...snapshot-v8.16.0) (2025-11-18)
+
+
+### Features
+
+* enhanced release workflow ([fc8b7b0](https://github.com/MattDevy/es-todoify/commit/fc8b7b08e8d927c8a4e342d82a71783cf56aa7ad))
+
 # [8.15.0](https://github.com/MattDevy/es-todoify/compare/snapshot-v8.14.0...snapshot-v8.15.0) (2025-11-18)
 
 
