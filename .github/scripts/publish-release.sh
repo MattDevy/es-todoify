@@ -10,11 +10,22 @@ VERSION="${1:-}"
 
 VERSION_NUM="${VERSION#v}"
 RELEASE_BRANCH="${RELEASE_BRANCH:-main}"
+RELEASE="${RELEASE:-}"
 
-echo "Publishing release for version: $VERSION"
+echo "Release version: $VERSION"
 echo "Release branch: $RELEASE_BRANCH"
 
 setup_git_user
+
+if [[ -z "$RELEASE" ]]; then
+    echo "Preparing changelog for release PR"
+    [[ -f "CHANGELOG.md" ]] && git add CHANGELOG.md
+    write_github_output "RELEASE_VERSION" "$VERSION"
+    echo "Changelog staged for PR creation"
+    exit 0
+fi
+
+echo "Executing full release (RELEASE=true)"
 
 SNAPSHOT_TAG="snapshot-v${VERSION_NUM}"
 echo "Creating snapshot tag ${SNAPSHOT_TAG}..."
