@@ -1,3 +1,17 @@
+# [8.15.0](https://github.com/MattDevy/es-todoify/compare/snapshot-v8.14.0...snapshot-v8.15.0) (2025-11-18)
+
+
+### Bug Fixes
+
+* don't commit to main ([03eed69](https://github.com/MattDevy/es-todoify/commit/03eed69653c2f896c1f1b2ff76012e2899eb3d4f))
+* publish-release ([9570af5](https://github.com/MattDevy/es-todoify/commit/9570af50ab48720a69ccfc5ae95f1635af1da77e))
+* use snapshot tags to track ([db954ac](https://github.com/MattDevy/es-todoify/commit/db954ac57ad2a2fc56f9bc3569e12d4ad5e77727))
+
+
+### Features
+
+* use semantic release instead ([19227b3](https://github.com/MattDevy/es-todoify/commit/19227b3ddd2335fee19a0a4412c37b7fa36c6468))
+
 # Changelog
 
 ## [8.14.0](https://github.com/MattDevy/es-todoify/compare/v8.13.0...v8.14.0) (2025-11-18)
