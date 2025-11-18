@@ -90,6 +90,10 @@ log "Committing and tagging..."
 git commit -am "chore: release $RELEASE_VERSION"
 git tag "$RELEASE_VERSION"
 
+# Get the commit SHA that we just tagged
+COMMIT_SHA=$(git rev-parse HEAD)
+log "Tagged commit SHA: $COMMIT_SHA"
+
 # 6. Push Tag
 log "Pushing tag $RELEASE_VERSION..."
 # We purposefully only push the tag, not the detached commit, to the branch
@@ -100,6 +104,6 @@ log "Creating GitHub Release..."
 gh release create "$RELEASE_VERSION" \
     --title "$RELEASE_VERSION" \
     --notes "$RELEASE_NOTES" \
-    --target "$RELEASE_VERSION"
+    --target "$COMMIT_SHA"
 
 log "Release $RELEASE_VERSION created successfully!"
