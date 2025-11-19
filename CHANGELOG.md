@@ -1,3 +1,10 @@
+## [8.16.2](https://github.com/MattDevy/es-todoify/compare/snapshot-v8.16.1...snapshot-v8.16.2) (2025-11-19)
+
+
+### Bug Fixes
+
+* whitespace ([ba8100a](https://github.com/MattDevy/es-todoify/commit/ba8100a8f4006d2378942f9afd0a205496ab625a))
+
 ## [8.16.1](https://github.com/MattDevy/es-todoify/compare/snapshot-v8.16.0...snapshot-v8.16.1) (2025-11-18)
 
 
